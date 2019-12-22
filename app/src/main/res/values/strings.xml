@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">LocationFetchLib</string>
+    <string name="location_text">"Latitude: %1$.4f \n Longitude: %2$.4f
+\n Timestamp: %3$tr"</string>
+    <string name="no_location">No Location</string>
+    <string name="waiting_for_location">Waiting for Location...</string>
+</resources>
