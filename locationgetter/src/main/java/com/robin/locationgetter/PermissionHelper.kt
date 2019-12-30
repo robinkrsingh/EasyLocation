@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 Robin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.robin.locationgetter
 
 import android.Manifest
@@ -16,6 +31,8 @@ class PermissionHelper(permissionListener: PermissionListener) : Fragment(),
 
     val REQUEST_LOCATION_PERMISSION = 1
 
+    var fetchingLocation = false
+
     lateinit var activity: Activity
 
     lateinit var locationSetting: LocationSetting
@@ -30,6 +47,7 @@ class PermissionHelper(permissionListener: PermissionListener) : Fragment(),
         fun permissionStatus(permissionValue: Boolean)
 
         fun settingStatus(settingValue: Boolean)
+        fun stopLocationUpdates()
 
 
     }
@@ -39,8 +57,8 @@ class PermissionHelper(permissionListener: PermissionListener) : Fragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         retainInstance = true
-
         checkLocationSetting(locationRequest)
+
 
 
     }
@@ -57,6 +75,18 @@ class PermissionHelper(permissionListener: PermissionListener) : Fragment(),
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(fetchingLocation)
+           permissionListener.fetchLocation()
+
+    }
+
+    override fun onPause() {
+        super.onPause()
+        permissionListener.stopLocationUpdates()
+    }
+
     fun getPermissionStatus() {
         if (ActivityCompat.checkSelfPermission(
                 activity,
@@ -69,6 +99,7 @@ class PermissionHelper(permissionListener: PermissionListener) : Fragment(),
             )
         } else {
 
+            fetchingLocation= true
             permissionListener.fetchLocation()
 
 

@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 Robin
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.robin.locationgetter
 
 import android.app.Activity
@@ -57,10 +72,10 @@ class EasyLocation(activity: Activity, easyLocationCallBack: EasyLocationCallBac
         }
 
 
-        var mHeadlessFrag = (activity as FragmentActivity).supportFragmentManager
+        var permissionHelper = (activity as FragmentActivity).supportFragmentManager
             .findFragmentByTag(TAG) as PermissionHelper?
-        if (mHeadlessFrag == null) {
-            mHeadlessFrag =
+        if (permissionHelper == null) {
+            permissionHelper =
                 PermissionHelper.newInstance(object : PermissionHelper.PermissionListener {
 
 
@@ -88,20 +103,26 @@ class EasyLocation(activity: Activity, easyLocationCallBack: EasyLocationCallBac
 
 
                         if (settingValue)
-                            mHeadlessFrag?.getPermissionStatus()
+                            permissionHelper?.getPermissionStatus()
                         else
                             easyLocationCallBack.locationSettingFailed()
 
 
                     }
 
+                    override fun stopLocationUpdates() {
+
+                        mFusedLocationClient.removeLocationUpdates(mLocationCallback)
+
+                    }
+
 
                 })
 
-            activity.supportFragmentManager.beginTransaction().add(mHeadlessFrag, TAG)
+            activity.supportFragmentManager.beginTransaction().add(permissionHelper, TAG)
                 .commit()
 
-            mHeadlessFrag.setLocationRequest(locationRequest)
+            permissionHelper.setLocationRequest(locationRequest)
 
 
         }
